@@ -1,0 +1,5 @@
+- You MUST use pnpm for the package manager of choice
+- You MUST only use shadCN components as the UI library
+- You MUST use the latest version of Next.js
+- You MUST use TypeScript for type safety
+- You MUST use Tailwind CSS for styling
