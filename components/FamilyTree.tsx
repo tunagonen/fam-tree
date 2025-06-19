@@ -17,7 +17,13 @@ import { familyTreeData, familyConnections } from "@/data/familyData";
 import { createNodesAndEdges } from "@/lib/familyTreeLayout";
 
 // Fallback node for debugging
-const FallbackNode = ({ id, data }: { id: string; data?: any }) => (
+const FallbackNode = ({
+  id,
+  data,
+}: {
+  id: string;
+  data?: { label: string };
+}) => (
   <div className="bg-yellow-200 border-2 border-yellow-600 px-4 py-2 rounded shadow text-center">
     <span className="font-bold text-yellow-800">Unknown Node: {id}</span>
     <div className="text-xs text-gray-700">{id}</div>
