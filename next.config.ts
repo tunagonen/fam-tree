@@ -1,5 +1,7 @@
 import type { NextConfig } from "next";
 
+const repo = "fam-tree"; // your repo name
+
 const nextConfig: NextConfig = {
   /**
    * Enable static exports.
@@ -13,7 +15,13 @@ const nextConfig: NextConfig = {
    *
    * @see https://nextjs.org/docs/app/api-reference/next-config-js/basePath
    */
-  basePath: "/kuzenler",
+  basePath: `/${repo}`,
+
+  /**
+   * Add asset prefix. This ensures static assets and CSS are loaded from the
+   * correct path on GitHub Pages.
+   */
+  assetPrefix: `/${repo}/`,
 
   /**
    * Disable server-based image optimization. Next.js does not support
