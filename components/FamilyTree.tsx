@@ -71,20 +71,23 @@ const FamilyTree: React.FC = () => {
   const [rfEdges, , onEdgesChange] = useEdgesState(edges);
 
   return (
-    <div className="w-full min-h-[600px] h-screen bg-gray-50">
-      <ReactFlow
-        nodes={rfNodes}
-        edges={rfEdges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        nodeTypes={nodeTypes}
-        fitView
-        attributionPosition="top-right"
-        className="bg-gray-50"
-      >
-        <Background color="#e2e8f0" />
-        <Controls />
-      </ReactFlow>
+    <div className="w-full h-screen flex items-center justify-center bg-gray-50 overflow-hidden p-8">
+      <div className="w-full h-full max-w-6xl max-h-[90vh] flex items-center justify-center">
+        <ReactFlow
+          nodes={rfNodes}
+          edges={rfEdges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          nodeTypes={nodeTypes}
+          fitView
+          defaultViewport={{ x: 0, y: 0, zoom: 0.1 }}
+          attributionPosition="top-right"
+          className="bg-gray-50 rounded-lg shadow-lg"
+        >
+          <Background color="#e2e8f0" />
+          <Controls />
+        </ReactFlow>
+      </div>
     </div>
   );
 };
