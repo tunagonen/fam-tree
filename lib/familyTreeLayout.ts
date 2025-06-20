@@ -74,66 +74,70 @@ export const createNodesAndEdges = (
     });
   });
 
-  // 2. Create family unit nodes for each spouse pair
+  // 2. Create family unit nodes for each unique spouse pair
+  const processedGroups = new Set<string>();
   Object.values(familyTree.members).forEach((member) => {
-    if (member.spouseId && member.id < member.spouseId) {
-      // Only create one node per pair
-      const key = [member.id, member.spouseId].sort().join("-");
-      const familyNodeId = `family-${key}`;
-      familyNodes[key] = familyNodeId;
-      nodes.push({
-        id: familyNodeId,
-        type: "familyUnit",
-        position: { x: 0, y: 0 },
-        data: {
-          label: `${member.name} + ${
-            familyTree.members[member.spouseId]?.name
-          }`,
-          spouses: [member.id, member.spouseId],
-        },
-      });
-      // Connect each spouse to the family node
-      edges.push({
-        id: `${member.id}-${familyNodeId}`,
-        source: member.id,
-        target: familyNodeId,
-        type: "default",
-        // style: { stroke: "#ef4444", strokeWidth: 2 },
-        animated: false,
-      });
-      edges.push({
-        id: `${member.spouseId}-${familyNodeId}`,
-        source: member.spouseId,
-        target: familyNodeId,
-        type: "default",
-        // style: { stroke: "#ef4444", strokeWidth: 2 },
-        animated: false,
-      });
-      // Connect family node to children
-      const children = member.children || [];
-      children.forEach((childId) => {
-        edges.push({
-          id: `${familyNodeId}-${childId}`,
-          source: familyNodeId,
-          target: childId,
-          type: "default",
-          // style: { stroke: "#3b82f6", strokeWidth: 3 },
-          animated: false,
-        });
+    if (member.spouseIds && member.spouseIds.length > 0) {
+      member.spouseIds.forEach((spouseId) => {
+        // Create a group for each pair (member + spouse)
+        const group = [member.id, spouseId].sort();
+        const key = group.join("-");
+        if (!processedGroups.has(key)) {
+          processedGroups.add(key);
+          const familyNodeId = `family-${key}`;
+          familyNodes[key] = familyNodeId;
+          nodes.push({
+            id: familyNodeId,
+            type: "familyUnit",
+            position: { x: 0, y: 0 },
+            data: {
+              label: group
+                .map((id) => familyTree.members[id]?.name)
+                .join(" + "),
+              spouses: group,
+            },
+          });
+          // Connect each spouse to the family node
+          group.forEach((spouse) => {
+            edges.push({
+              id: `${spouse}-${familyNodeId}`,
+              source: spouse,
+              target: familyNodeId,
+              type: "default",
+              animated: false,
+            });
+          });
+          // Connect family node to children shared by both spouses
+          const memberChildren = new Set(familyTree.members[member.id]?.children || []);
+          const spouseChildren = new Set(familyTree.members[spouseId]?.children || []);
+          // Only connect children that are listed for both parents (intersection)
+          const sharedChildren = Array.from(memberChildren).filter(childId => spouseChildren.has(childId));
+          sharedChildren.forEach((childId) => {
+            edges.push({
+              id: `${familyNodeId}-${childId}`,
+              source: familyNodeId,
+              target: childId,
+              type: "default",
+              animated: false,
+            });
+          });
+        }
       });
     }
   });
 
   // 3. Add any remaining bloodline edges for single parents (no spouse)
   Object.values(familyTree.members).forEach((member) => {
-    if (!member.spouseId && member.children) {
+    if (
+      (!member.spouseIds || member.spouseIds.length === 0) &&
+      member.children
+    ) {
       member.children.forEach((childId) => {
         edges.push({
           id: `${member.id}-${childId}`,
           source: member.id,
           target: childId,
           type: "default",
-          // style: { stroke: "#3b82f6", strokeWidth: 3 },
           animated: false,
         });
       });

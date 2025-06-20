@@ -8,6 +8,7 @@ export interface FamilyMemberNodeProps extends NodeProps {
     name: string;
     gender: "male" | "female";
     isBloodline: boolean;
+    spouseIds?: string[]; // support multiple spouses
   };
 }
 
@@ -22,8 +23,8 @@ const FamilyMemberNode = memo(({ data, selected }: FamilyMemberNodeProps) => {
       <span className="ml-1 text-pink-200">♀️</span>
     );
 
-  // Node color: orange for bloodline, blue for outsider
-  const bgColor = isBloodline ? "bg-orange-500" : "bg-blue-500";
+  // Node color: blue for bloodline, orange for outsider
+  const bgColor = isBloodline ? "bg-blue-500" : "bg-orange-500";
 
   return (
     <div
